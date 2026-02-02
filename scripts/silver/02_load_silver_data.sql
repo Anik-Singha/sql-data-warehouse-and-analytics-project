@@ -50,7 +50,7 @@ AS
                         UPPER(trim(cst_gndr)) = 'F'
                     THEN 'Female'
                     ELSE 'n/a'
-                END                 AS cst_gndr          ,
+                END                 AS cst_gndr          ,  -- Normalize gender values to readable format
                 cst_create_date
             FROM
                 (
@@ -91,8 +91,8 @@ AS
                 )
             SELECT
                 prd_id                                                          ,
-                REPLACE(substring(prd_key,1,5), '-', '_')            AS cat_id  ,
-                REPLACE(substring(prd_key,7,LEN(prd_key)), '-', '_') AS prd_key ,
+                REPLACE(substring(prd_key,1,5), '-', '_')            AS cat_id  ,   -- Extract category ID
+                REPLACE(substring(prd_key,7,LEN(prd_key)), '-', '_') AS prd_key ,   -- Extract product key
                 prd_nm                                                          ,
                 ISNULL(prd_cost,0)                                   AS prd_cost,
                 CASE
@@ -110,7 +110,7 @@ AS
                         'T'
                     THEN 'Touring'
                     ELSE 'n/a'
-                END                                                  AS prd_line,
+                END                                                  AS prd_line,   -- Map product line codes to descriptive values
                 CAST(prd_start_dt AS DATE)                                      ,
                 CAST(LEAD(prd_start_dt) OVER
                     (
@@ -119,7 +119,7 @@ AS
                         ORDER BY
                             prd_start_dt
                     )
-                -1 AS DATE)                                          AS prd_end_dt_test
+                -1 AS DATE)                                          AS prd_end_dt_test -- Calculate end date as one day before the next strt date
             FROM
                 bronze.crm_prd_info;
             SET @end_time = GETDATE();
@@ -209,7 +209,7 @@ AS
                         cid LIKE 'NAS%'
                     THEN substring(cid,4,LEN(cid))
                     ELSE cid
-                END cid  ,
+                END cid  ,  -- Remove 'NAS' prefix if present
                 CASE
                     WHEN
                         bdate > GETDATE()
