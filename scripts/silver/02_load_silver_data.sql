@@ -1,3 +1,6 @@
+PRINT 'Truncating Table: silver.crm_cust_info';
+TRUNCATE TABLE silver.crm_cust_info;
+PRINT '>> Inserting Data Into: silver.crm_cust_info';
 INSERT INTO silver.crm_cust_info
     (
         cst_id            ,
@@ -47,8 +50,11 @@ FROM
         FROM
             bronze.crm_cust_info )t
 WHERE
-    latest_entry = 1
+    latest_entry = 1;
 ---------------------------------------------------
+PRINT 'Truncating Table: silver.crm_prd_info';
+TRUNCATE TABLE silver.crm_prd_info;
+PRINT '>> Inserting Data Into: silver.crm_prd_info';
 TRUNCATE TABLE silver.crm_prd_info
 INSERT INTO silver.crm_prd_info
     (
@@ -97,6 +103,9 @@ FROM
 --------------------------------------------
 -- crm_sales_details
 --------------------------------------------
+PRINT 'Truncating Table: silver.crm_sales_details';
+TRUNCATE TABLE silver.crm_sales_details;
+PRINT '>> Inserting Data Into: silver.crm_sales_details';
 INSERT INTO silver.crm_sales_details
     (
         sls_ord_num ,
@@ -141,7 +150,7 @@ SELECT
             OR sls_sales != sls_quantity * ABS(sls_price)
         THEN sls_quantity * ABS(sls_price)
         ELSE sls_sales
-    END AS sls_sales   ,    -- Recalculate sales if original value is missing or incorrect
+    END AS sls_sales   , -- Recalculate sales if original value is missing or incorrect
     sls_quantity       ,
     CASE
         WHEN
@@ -149,44 +158,89 @@ SELECT
             OR sls_price <= 0
         THEN sls_sales / NULLIF(sls_quantity,0)
         ELSE sls_price
-    END AS sls_price       -- Derive price if original value is invalid
+    END AS sls_price -- Derive price if original value is invalid
 FROM
     bronze.crm_sales_details;
-
 --------------------------------------
-
-insert into silver.erp_cust_az12(
-    cid,
-    bdate,
-    gen
-)
-select 
-    case when cid like 'NAS%' then SUBSTRING(cid,4,LEN(cid))
-        else cid
-    end cid,
-    case when bdate > GETDATE() then null
-        else bdate
-    end bdate,  -- Set future birthdates to NULL
-    case when upper(trim(gen)) in ('F', 'Female') then 'Female'
-         when upper(trim(gen)) in ('M', 'Male') then 'Male'
-         else 'n/a'
-    end as gen  -- Normalize gender values and handle unknown cases
-from bronze.erp_cust_az12
-
-
+PRINT 'Truncating Table: silver.erp_cust_az12';
+TRUNCATE TABLE silver.erp_cust_az12;
+PRINT '>> Inserting Data Into: silver.erp_cust_az12';
+INSERT INTO silver.erp_cust_az12
+    (
+        cid  ,
+        bdate,
+        gen
+    )
+SELECT
+    CASE
+        WHEN
+            cid LIKE 'NAS%'
+        THEN substring(cid,4,LEN(cid))
+        ELSE cid
+    END cid  ,
+    CASE
+        WHEN
+            bdate > GETDATE()
+        THEN NULL
+        ELSE bdate
+    END bdate, -- Set future birthdates to NULL
+    CASE
+        WHEN
+            UPPER(trim(gen)) IN ('F',
+                                 'Female')
+        THEN 'Female'
+        WHEN
+            UPPER(trim(gen)) IN ('M',
+                                 'Male')
+        THEN 'Male'
+        ELSE 'n/a'
+    END AS gen -- Normalize gender values and handle unknown cases
+FROM
+    bronze.erp_cust_az12;
 ----------------------------------------
-insert into silver.erp_loc_a101(
-    cid,
-    cntry
-)
-select 
-    replace(cid,'-','') cid,
-    case when UPPER(trim(cntry)) in ('DE','GERMANY') then 'Germany'
-         when UPPER(trim(cntry)) in ('US','USA','UNITED STATES') then 'United States'
-         when trim(cntry) = '' or cntry is null then 'n/a'
-        else trim(cntry)
-    end cntry   -- Normalize and Handle missing or blank country codes
-from bronze.erp_loc_a101
-
-
+PRINT 'Truncating Table: silver.erp_loc_a101';
+TRUNCATE TABLE silver.erp_loc_a101;
+PRINT '>> Inserting Data Into: silver.erp_loc_a101';
+INSERT INTO silver.erp_loc_a101
+    (
+        cid,
+        cntry
+    )
+SELECT
+    REPLACE(cid,'-','') cid,
+    CASE
+        WHEN
+            UPPER(trim(cntry)) IN ('DE',
+                                   'GERMANY')
+        THEN 'Germany'
+        WHEN
+            UPPER(trim(cntry)) IN ('US',
+                                   'USA',
+                                   'UNITED STATES')
+        THEN 'United States'
+        WHEN
+            trim(cntry) = ''
+            OR cntry IS NULL
+        THEN 'n/a'
+        ELSE trim(cntry)
+    END                 cntry -- Normalize and Handle missing or blank country codes
+FROM
+    bronze.erp_loc_a101;
 ----------------------------------------
+PRINT 'Truncating Table: silver.erp_px_cat_g1v2';
+TRUNCATE TABLE silver.erp_px_cat_g1v2;
+PRINT '>> Inserting Data Into: silver.erp_px_cat_g1v2';
+INSERT INTO silver.erp_px_cat_g1v2
+    (
+        id    ,
+        cat   ,
+        subcat,
+        maintenance
+    )
+SELECT
+    id    ,
+    cat   ,
+    subcat,
+    maintenance
+FROM
+    bronze.erp_px_cat_g1v2;
