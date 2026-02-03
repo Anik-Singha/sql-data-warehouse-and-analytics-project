@@ -65,7 +65,8 @@ AS
                             )
                         AS latest_entry
                     FROM
-                        bronze.crm_cust_info )t
+                        bronze.crm_cust_info 
+                        WHERE cst_id IS NOT NULL)t
             WHERE
                 latest_entry = 1; -- Select Most Recent Record per customer
             SET @end_time = GETDATE();
