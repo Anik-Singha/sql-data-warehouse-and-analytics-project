@@ -6,8 +6,8 @@
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-A complete **end-to-end Data Warehouse & Analytics project** built using **SQL Server** following industry best practices.  
-This project demonstrates **data engineering, ETL development, data modeling, and analytical reporting**, making it ideal for portfolio and job applications.
+A complete **end-to-end Data Warehouse** built using **SQL Server** following industry best practices.  
+This project demonstrates **data engineering, ETL development, data modeling, and analytical reporting**.
 
 ---
 
@@ -107,27 +107,8 @@ data-warehouse-project/
 ├── LICENSE
 
 ```
-## 🧠 Key Learnings
 
-- Designing scalable data warehouse architecture  
-- Building ETL pipelines using SQL  
-- Applying dimensional modeling techniques  
-- Creating analytics-ready datasets  
-- Writing optimized SQL queries  
-- Structuring real-world data projects  
 
----
-
-## 📊 Analytics Use Cases
-
-- 📈 Sales performance over time  
-- 👥 Customer purchasing behavior  
-- 🛒 Product performance analysis  
-- 🌍 Regional sales insights  
-
-These insights support **data-driven business decisions**.
-
----
 
 ## 🧪 Testing & Data Quality
 
